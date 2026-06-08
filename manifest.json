@@ -1,0 +1,21 @@
+{
+  "short_name": "ESP32 Dash",
+  "name": "ESP32-C3 BLE Dashboard",
+  "icons": [
+    {
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "index.html",
+  "background_color": "#f0f2f5",
+  "theme_color": "#007bff",
+  "display": "standalone",
+  "orientation": "portrait"
+}
