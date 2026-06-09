@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="64"
+   height="64"
+   viewBox="0 0 64 64"
+   fill="none"
+   version="1.1"
+   id="svg1058"
+   sodipodi:docname="waveform-icon mit HSNR.svg"
+   inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
+   inkscape:export-filename="waveform-icon mit HSNR.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1062" />
+  <sodipodi:namedview
+     id="namedview1060"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="6.4375"
+     inkscape:cx="59.805825"
+     inkscape:cy="6.6796116"
+     inkscape:window-width="1920"
+     inkscape:window-height="1027"
+     inkscape:window-x="2040"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1058" />
+  <!-- Background rectangle with rounded corners -->
+  <rect
+     x="2"
+     y="2"
+     width="60"
+     height="60"
+     rx="8"
+     ry="8"
+     fill="#f0f0f0"
+     stroke="#333"
+     stroke-width="2"
+     id="rect1050" />
+  <!-- Center dividing line -->
+  <line
+     x1="4"
+     y1="32"
+     x2="60"
+     y2="32"
+     stroke="#ccc"
+     stroke-width="1"
+     stroke-dasharray="2,2"
+     id="line1052" />
+  <!-- Sine wave -->
+  <path
+     d="M 4 17 L 4.5600000000000005 15.997334131485566 L 5.12 15.01048090268116 L 5.68 14.055003578522573 L 6.24 13.14597060718628 L 6.800000000000001 12.297717981660217 L 7.359999999999999 11.52362315257049 L 7.92 10.835894057793684 L 8.48 10.245376595983878 L 9.04 9.761383580271845 L 9.600000000000001 9.39154786963877 L 10.16 9.14170199417049 L 10.719999999999999 9.015786172573828 L 11.280000000000001 9.015786172573828 L 11.84 9.14170199417049 L 12.4 9.39154786963877 L 12.96 9.761383580271843 L 13.520000000000001 10.245376595983881 L 14.08 10.835894057793684 L 14.64 11.523623152570488 L 15.200000000000001 12.297717981660213 L 15.76 13.145970607186271 L 16.32 14.05500357852257 L 16.880000000000003 15.010480902681158 L 17.439999999999998 15.997334131485562 L 18 16.999999999999996 L 18.560000000000002 18.002665868514434 L 19.12 18.98951909731884 L 19.68 19.944996421477427 L 20.24 20.854029392813725 L 20.8 21.702282018339787 L 21.36 22.476376847429513 L 21.92 23.164105942206312 L 22.48 23.754623404016122 L 23.040000000000003 24.238616419728157 L 23.599999999999998 24.60845213036123 L 24.16 24.85829800582951 L 24.72 24.984213827426174 L 25.28 24.984213827426174 L 25.84 24.85829800582951 L 26.400000000000002 24.60845213036123 L 26.959999999999997 24.23861641972816 L 27.52 23.75462340401613 L 28.08 23.16410594220632 L 28.64 22.476376847429517 L 29.2 21.702282018339787 L 29.76 20.85402939281373 L 30.32 19.944996421477423 L 30.88 18.989519097318844 L 31.439999999999998 18.00266586851443 L 32 17.000000000000004 L 32.56 15.997334131485575 L 33.120000000000005 15.010480902681161 L 33.68 14.055003578522582 L 34.24 13.145970607186275 L 34.800000000000004 12.297717981660217 L 35.36 11.523623152570487 L 35.92 10.835894057793695 L 36.48 10.245376595983883 L 37.04 9.761383580271849 L 37.6 9.391547869638773 L 38.16 9.141701994170493 L 38.72 9.015786172573828 L 39.28 9.015786172573828 L 39.84 9.141701994170491 L 40.4 9.39154786963877 L 40.96 9.761383580271847 L 41.52 10.245376595983878 L 42.080000000000005 10.835894057793691 L 42.64 11.523623152570483 L 43.199999999999996 12.297717981660213 L 43.76 13.14597060718627 L 44.32 14.055003578522575 L 44.879999999999995 15.010480902681156 L 45.44 15.997334131485568 L 46 16.999999999999996 L 46.56 18.002665868514423 L 47.120000000000005 18.989519097318837 L 47.68 19.944996421477416 L 48.24 20.85402939281372 L 48.800000000000004 21.70228201833978 L 49.36 22.476376847429513 L 49.919999999999995 23.164105942206305 L 50.48 23.754623404016122 L 51.04 24.23861641972815 L 51.6 24.608452130361233 L 52.16 24.858298005829507 L 52.72 24.984213827426174 L 53.28 24.984213827426174 L 53.84 24.85829800582951 L 54.4 24.608452130361236 L 54.96 24.238616419728153 L 55.52 23.75462340401613 L 56.080000000000005 23.16410594220631 L 56.64 22.47637684742952 L 57.199999999999996 21.702282018339787 L 57.76 20.854029392813732 L 58.32 19.944996421477427 L 58.879999999999995 18.989519097318844 L 59.44 18.002665868514434 L 60 17.000000000000004"
+     stroke="#3b82f6"
+     stroke-width="2"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     fill="none"
+     id="path1054" />
+  <!-- Square wave -->
+  <path
+     d="M 4 55 L 11 55 L 11 55 L 11 39 L 25 39 L 25 55 L 39 55 L 39 39 L 53 39 L 60 39 L 60 55"
+     stroke="#ef4444"
+     stroke-width="2"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     fill="none"
+     id="path1056" />
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.6667px;font-family:'Californian FB';-inkscape-font-specification:'Californian FB, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#c5c5c5;stroke:#636363;stroke-width:1.00157"
+     x="18.873787"
+     y="35.417477"
+     id="text1585"><tspan
+       sodipodi:role="line"
+       id="tspan1583"
+       x="18.873787"
+       y="35.417477"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.6667px;font-family:'Californian FB';-inkscape-font-specification:'Californian FB, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">HSNR</tspan></text>
+</svg>
