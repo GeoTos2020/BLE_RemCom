@@ -3,109 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLE Ping-Pong Test</title>
+    <title>BLE Dynamisches UI Test</title>
     <link rel="manifest" href="manifest.json">
-    
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 20px; background: #f0f2f5; }
-        button { padding: 15px 30px; font-size: 18px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px; }
-        .box { background: white; padding: 20px; border-radius: 8px; margin: 20px auto; max-width: 400px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        /* Grund-Styling der App – Startzustand ist weiß/hellgrau */
+        body { font-family: sans-serif; text-align: center; padding: 20px; background: #ffffff; color: #333333; transition: background 0.5s; }
+        button { padding: 12px 24px; font-size: 16px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px; margin: 5px; }
+        .box { background: rgba(255,255,255,0.9); padding: 20px; border-radius: 8px; margin: 20px auto; max-width: 400px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); color: #222; }
         .status { color: gray; font-weight: bold; }
-        .wert { font-size: 32px; color: #28a745; margin: 10px 0; }
+        
+        /* Dynamischer Bereich, in den die Widgets injiziert werden */
+        #widget-container { margin-top: 30px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        
+        /* Dynamisches Styling für den generierten Slider */
+        .generated-slider-card { background: #f9f9f9; border: 1px solid #ddd; padding: 15px; border-radius: 6px; width: 80%; max-width: 300px; text-align: left; }
+        .generated-slider-card label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .generated-slider-card input { width: 100%; }
     </style>
 </head>
 <body>
 
-    <h1>Machbarkeitsstudie BLE</h1>
+    <h1 id="app-title">Dynamisches BLE Dashboard</h1>
     
-    <button id="connectBtn" onclick="connectBLE()">Mit ESP32 verbinden</button>
+    <button id="connectBtn" onclick="connectBLE()">1. Mit ESP32 verbinden</button>
+    <button id="simBtn" onclick="runByteSimulation()" style="background: #28a745;">2. Byte-Array simulieren</button>
     
     <div class="box">
-        <p>Status: <span id="statusLabel" class="status">Nicht verbunden</span></p>
-        <hr>
-        <p>Empfangen vom ESP32 (Original):</p>
-        <div id="rxLabel" class="wert">0</div>
-        <p>Zurückgesendet an ESP32 (x 2):</p>
-        <div id="txLabel" class="wert" style="color: #dc3545;">0</div>
+        <p>Status: <span id="statusLabel" class="status">Warte auf Daten...</span></p>
+        <p id="versionLabel" style="font-size: 12px; color: #777;"></p>
     </div>
 
-    <script>
-        // Die exakt gleichen UUIDs wie im ESP32 Code
-        const SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
-        const CHAR_TX_UUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8"; // Vom ESP gesendet
-        const CHAR_RX_UUID = "62a40a5a-2270-4e31-8e99-db0067341ea2"; // Vom Handy gesendet
+    <div id="widget-container"></div>
 
+    <script>
+        const SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
+        const CHAR_TX_UUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
+        const CHAR_RX_UUID = "62a40a5a-2270-4e31-8e99-db0067341ea2";
         let rxCharacteristic = null;
 
-        async function connectBLE() {
-            const statusLabel = document.getElementById("statusLabel");
-            statusLabel.innerText = "Suche Geräte...";
-            
-            try {
-                // 1. Nach dem ESP32-C3 suchen
-                const device = await navigator.bluetooth.requestDevice({
-                    filters: [{ services: [SERVICE_UUID] }]
-                });
+        // ==========================================================================
+        // MAIN PARSER: Diese Funktion zerlegt das dynamische Byte-Array
+        // ==========================================================================
+        function parseLayoutByteArray(uint8Array) {
+            let pointer = 0;
+            const container = document.getElementById("widget-container");
+            container.innerHTML = ""; // Alten Inhalt leeren
 
-                statusLabel.innerText = "Verbinde mit Server...";
-                const server = await device.gatt.connect();
-
-                statusLabel.innerText = "Lade Service...";
-                const service = await server.getPrimaryService(SERVICE_UUID);
-
-                statusLabel.innerText = "Suche Kanäle...";
-                // Kanal zum Schreiben (Handy -> ESP) holen
-                rxCharacteristic = await service.getCharacteristic(CHAR_RX_UUID);
-                
-                // Kanal zum Lesen (ESP -> Handy) holen
-                const txChar = await service.getCharacteristic(CHAR_TX_UUID);
-                
-                // Benachrichtigungen (Notify) vom ESP aktivieren
-                await txChar.startNotifications();
-                txChar.addEventListener('characteristicvaluechanged', handleIncomingData);
-
-                statusLabel.innerText = "Verbunden & Aktiv!";
-                statusLabel.style.color = "green";
-                document.getElementById("connectBtn").style.display = "none";
-
-            } catch (error) {
-                console.error(error);
-                statusLabel.innerText = "Fehler: " + error;
-                statusLabel.style.color = "red";
-            }
-        }
-
-        // Verarbeitung der Daten, die vom ESP32 reinkommen
-        function handleIncomingData(event) {
-            // Byte-Array in Text umwandeln
             const decoder = new TextDecoder('utf-8');
-            const rawText = decoder.decode(event.target.value);
-            const originalValue = parseInt(rawText) || 0;
 
-            // UI aktualisieren (Originalwert anzeigen)
-            document.getElementById("rxLabel").innerText = originalValue;
+            // Solange Daten im Array vorhanden sind
+            while (pointer < uint8Array.length) {
+                let id = uint8Array[pointer++];
+                let paramCount = uint8Array[pointer++];
+                
+                console.log(`Lese ID: ${id} mit ${paramCount} Parametern`);
 
-            // MATHEMATIK: Wert verdoppeln
-            const multipliedValue = originalValue * 2;
-            document.getElementById("txLabel").innerText = multipliedValue;
+                // Zwischenspeicher für die extrahierten Parameter dieser ID
+                let extractedParams = [];
 
-            // WERT ZURÜCKSCHICKEN (Handy -> ESP32)
-            sendToESP32(String(multipliedValue));
-        }
+                // Alle Parameter dieser ID einsammeln
+                for (let i = 0; i < paramCount; i++) {
+                    let type = uint8Array[pointer++];
+                    let length = uint8Array[pointer++];
+                    
+                    // Nutzdaten-Bytes für diesen Parameter ausschneiden
+                    let dataBytes = uint8Array.subarray(pointer, pointer + length);
+                    pointer += length; // Pointer weiterrücken
 
-        // Funktion zum Senden von Text an den ESP32
-        async function sendToESP32(text) {
-            if (!rxCharacteristic) return;
-            const encoder = new TextEncoder('utf-8');
-            const data = encoder.encode(text);
-            
-            try {
-                // Wert ohne Antwort-Verzögerung an den ESP32 jagen
-                await rxCharacteristic.writeValueWithoutResponse(data);
-            } catch (error) {
-                console.error("Sende-Fehler:", error);
+                    let parsedValue;
+                    
+                    // Datentyp-Weiche laut unserer Spezifikation
+                    if (type === 0x01) { // UINT8 (Zahl 0-255)
+                        parsedValue = dataBytes[0];
+                    } else if (type === 0x02) { // INT8 (Zahl -128 bis 127)
+                        let view = new DataView(dataBytes.buffer, dataBytes.byteOffset, dataBytes.byteLength);
+                        parsedValue = view.getInt8(0);
+                    } else if (type === 0x03) { // BOOL
+                        parsedValue = dataBytes[0] === 0x01;
+                    } else if (type === 0x04) { // COLOR (RGB 3 Bytes)
+                        let r = dataBytes[0].toString(16).padStart(2, '0');
+                        let g = dataBytes[1].toString(16).padStart(2, '0');
+                        let b = dataBytes[2].toString(16).padStart(2, '0');
+                        parsedValue = `#${r}${g}${b}`;
+                    } else if (type === 0x05) { // STRING
+                        parsedValue = decoder.decode(dataBytes);
+                    }
+
+                    extractedParams.push(parsedValue);
+                }
+
+                // --- AUSWERTUNG DER GEWONNENEN DATEN ---
+                if (id === 0x01) {
+                    // SEKTION 1: Globaler System-Header angewendet
+                    // Parameter-Index: 0 = Version, 1 = Hintergrundfarbe, 2 = Titel
+                    document.getElementById("versionLabel").innerText = "Protokoll-Version: " + extractedParams[0];
+                    document.body.style.backgroundColor = extractedParams[1];
+                    document.getElementById("app-title").innerText = extractedParams[2];
+                    
+                    // Textfarbe automatisch anpassen (Kontrast bei dunklem Hintergrund)
+                    if(extractedParams[1] === "#333333") document.body.style.color = "#ffffff";
+                    
+                    document.getElementById("statusLabel").innerText = "System-Header geladen.";
+                    document.getElementById("statusLabel").style.color = "green";
+                } 
+                else if (id === 0x02) {
+                    // SEKTION 2: Ein Slider-Widget soll gebaut werden!
+                    // Parameter-Index: 0 = VarName, 1 = CurrentValue, 2 = Min, 3 = Max
+                    const varName = extractedParams[0];
+                    const currVal = extractedParams[1];
+                    const minRange = extractedParams[2];
+                    const maxRange = extractedParams[3];
+
+                    // HTML-Element für den Slider erzeugen
+                    const card = document.createElement("div");
+                    card.className = "generated-slider-card";
+                    card.innerHTML = `
+                        <label>${varName.toUpperCase()} (<span id="val-${varName}">${currVal}</span>)</label>
+                        <input type="range" min="${minRange}" max="${maxRange}" value="${currVal}" id="input-${varName}">
+                    `;
+                    container.appendChild(card);
+
+                    // Event-Listener: Wenn der Slider bedient wird, senden wir Daten zurück
+                    card.querySelector("input").addEventListener("input", (e) => {
+                        document.getElementById(`val-${varName}`).innerText = e.target.value;
+                        // Hier rufen wir später die BLE-Sendefunktion auf!
+                        console.log(`Sende an ESP: ${varName} = ${e.target.value}`);
+                    });
+                }
             }
         }
-    </script>
-</body>
-</html>
+
+        // ==========================================================================
+        // 2. SIMULATIONS-TEST (Erzeugt exakt unser besprochenes Byte-Array)
+        // ==========================================================================
+        function
