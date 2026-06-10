@@ -136,4 +136,62 @@
         // ==========================================================================
         // 2. SIMULATIONS-TEST (Erzeugt exakt unser besprochenes Byte-Array)
         // ==========================================================================
-        function
+        function runByteSimulation() {
+            // Unser vordefiniertes 39-Byte langes Test-Array:
+            // Sektion 1 (ID 1, 3 Params): Version (1), Color (#333333), Title ("Roboter-Panel")
+            // Sektion 2 (ID 2, 4 Params): Name ("speed"), Val (0), Min (0), Max (180)
+            const testBytes = new Uint8Array([
+                // --- SYSTEM HEADER (ID 1) ---
+                0x01, // ID = 1
+                0x03, // 3 Parameter folgen
+                0x01, 0x01, 0x01, // Param 1: Type UINT8 (1), Length (1), Wert (1)
+                0x04, 0x03, 0x33, 0x33, 0x33, // Param 2: Type COLOR (4), Length (3), Wert (#333333)
+                0x05, 0x0d, 0x52, 0x6f, 0x62, 0x6f, 0x74, 0x65, 0x72, 0x2d, 0x50, 0x61, 0x6e, 0x65, 0x6c, // Param 3: Type STRING (5), Length 13, "Roboter-Panel"
+
+                // --- SLIDER WIDGET (ID 2) ---
+                0x02, // ID = 2 (Slider)
+                0x04, // 4 Parameter folgen
+                0x05, 0x05, 0x73, 0x70, 0x65, 0x65, 0x64, // Param 1: Type STRING (5), Length 5, "speed"
+                0x01, 0x01, 0x00, // Param 2: Type UINT8 (1), Length 1, Wert (0)
+                0x01, 0x01, 0x00, // Param 3: Type UINT8 (1), Length 1, Wert (0)
+                0x01, 0x01, 0xB4  // Param 4: Type UINT8 (1), Length 1, Wert (180 / Hex B4)
+            ]);
+
+            parseLayoutByteArray(testBytes);
+        }
+
+        // ==========================================================================
+        // 3. ECHTE BLUETOOTH INTEGRATION
+        // ==========================================================================
+        async function connectBLE() {
+            const statusLabel = document.getElementById("statusLabel");
+            statusLabel.innerText = "Suche ESP32...";
+            try {
+                const device = await navigator.bluetooth.requestDevice({
+                    filters: [{ services: [SERVICE_UUID] }]
+                });
+                statusLabel.innerText = "Verbinde...";
+                const server = await device.gatt.connect();
+                const service = await server.getPrimaryService(SERVICE_UUID);
+                
+                rxCharacteristic = await service.getCharacteristic(CHAR_RX_UUID);
+                const txChar = await service.getCharacteristic(CHAR_TX_UUID);
+                
+                await txChar.startNotifications();
+                txChar.addEventListener('characteristicvaluechanged', (event) => {
+                    // ECHTE DATEN VOM ESP32 EMPFANGEN:
+                    // Wir holen uns den Byte-Puffer direkt als Uint8Array
+                    let rawBuffer = new Uint8Array(event.target.value.buffer);
+                    parseLayoutByteArray(rawBuffer);
+                });
+
+                statusLabel.innerText = "Verbunden! Warte auf ESP-Bytes...";
+                document.getElementById("connectBtn").style.display = "none";
+            } catch (error) {
+                console.error(error);
+                statusLabel.innerText = "Fehler: " + error;
+            }
+        }
+    </script>
+</body>
+</html>
