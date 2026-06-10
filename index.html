@@ -76,9 +76,9 @@
                     if (type === 0x01) { // UINT8 (Zahl 0-255)
                         parsedValue = dataBytes[0];
                     } else if (type === 0x02) { // INT8 (Zahl -128 bis 127)
-                        let view = new DataView(dataBytes.buffer, dataBytes.byteOffset, dataBytes.byteLength);
-                        parsedValue = view.getInt8(0);
-                    } else if (type === 0x03) { // BOOL
+					// Einfache Vorzeichen-Konvertierung für 1 Byte
+						parsedValue = dataBytes[0] >= 128 ? dataBytes[0] - 256 : dataBytes[0];
+					} else if (type === 0x03) { // BOOL
                         parsedValue = dataBytes[0] === 0x01;
                     } else if (type === 0x04) { // COLOR (RGB 3 Bytes)
                         let r = dataBytes[0].toString(16).padStart(2, '0');
